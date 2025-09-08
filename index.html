@@ -1,0 +1,370 @@
+import React, { useState, useEffect } from "react";
+
+const data = {
+  makanan: [
+    {
+      id: 1,
+      nama: "Mie Aceh",
+      deskripsi: "Mie pedas bercampur rempah dan daging sapi atau seafood.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Mie_aceh_seafood.JPG",
+    },
+    {
+      id: 2,
+      nama: "Ayam Tangkap",
+      deskripsi: "Ayam goreng dengan rempah daun kari khas Aceh.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Ayam_Tangkap.jpg",
+    },
+    {
+      id: 3,
+      nama: "Sate Matang",
+      deskripsi: "Sate daging sapi dengan bumbu kacang khas Aceh.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Sate_Matang_aceh.JPG",
+    },
+    {
+      id: 4,
+      nama: "Kue Rupiah",
+      deskripsi: "Kue tradisional berbentuk lembaran tipis, manis dan legit.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/Kue_Rupiah_aceh.JPG",
+    },
+    {
+      id: 5,
+      nama: "Kuah Sie",
+      deskripsi: "Sup daging sapi dengan bumbu khas Aceh yang pedas dan kaya rempah.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/5/57/Kuah_Siep.jpg",
+    },
+    {
+      id: 6,
+      nama: "Nasi Gurih Aceh",
+      deskripsi:
+        "Nasi harum dimasak dengan santan dan rempah, disajikan dengan lauk tradisional.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Nasi_Gurih_Aceh.JPG",
+    },
+  ],
+  minuman: [
+    {
+      id: 1,
+      nama: "Kopi Gayo",
+      deskripsi: "Kopi robusta terkenal dari dataran tinggi Aceh.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Kopi_Gayo.jpg",
+    },
+    {
+      id: 2,
+      nama: "Teh Tarik Aceh",
+      deskripsi: "Teh susu khas Aceh dengan rasa manis dan creamy.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/1/15/Teh_Tarikh_Aceh.JPG",
+    },
+    {
+      id: 3,
+      nama: "Es Teh Manis",
+      deskripsi: "Minuman segar dan populer, cocok untuk iklim tropis Aceh.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/3/39/Es_Teh_Manis.jpg",
+    },
+    {
+      id: 4,
+      nama: "Jus Manggis",
+      deskripsi: "Jus segar dari buah manggis asli Aceh yang manis dan sehat.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Jus_Manggis.jpg",
+    },
+    {
+      id: 5,
+      nama: "Sari Kelapa",
+      deskripsi: "Air kelapa muda yang menyegarkan, sangat populer di Aceh.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Sari_Kelapa.jpg",
+    },
+    {
+      id: 6,
+      nama: "Kopi Luwak",
+      deskripsi:
+        "Kopi eksklusif dengan cita rasa unik dari biji kopi yang difermentasi luwak.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/Kopi_Luwak.jpg",
+    },
+  ],
+  dessert: [
+    {
+      id: 1,
+      nama: "Timphan",
+      deskripsi: "Kue tradisional Aceh dari pisang dan tepung ketan.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/7/75/Timphan.JPG",
+    },
+    {
+      id: 2,
+      nama: "Dodoh",
+      deskripsi: "Dessert manis dari ketan dan gula aren.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Dodoh.jpg",
+    },
+    {
+      id: 3,
+      nama: "Meuseukat",
+      deskripsi: "Kue lapis tradisional Aceh dengan rasa manis dan kenyal.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Meuseukat.JPG",
+    },
+    {
+      id: 4,
+      nama: "Bawang Aceh",
+      deskripsi: "Kue bawang gurih dan manis khas Aceh yang unik.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Bawang_aceh.jpg",
+    },
+    {
+      id: 5,
+      nama: "Kue Kutang",
+      deskripsi: "Kue tradisional Aceh yang dibuat dari tepung beras dan gula merah.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Kue_Kutang_Aceh.JPG",
+    },
+    {
+      id: 6,
+      nama: "Nagasari",
+      deskripsi: "Kue tradisional dari tepung beras, santan, dan pisang.",
+      img: "https://upload.wikimedia.org/wikipedia/commons/1/1c/Kue_Nagasari.JPG",
+    },
+  ],
+  cafe: [
+    {
+      id: 1,
+      nama: "Cafe Rizzy",
+      deskripsi: "Tempat nyaman dengan kopi terbaik dan suasana cozy.",
+      img: "https://media-cdn.tripadvisor.com/media/photo-s/1a/d0/f9/c7/cafe-rizzy.jpg",
+      ratingKey: "cafe-rizzy",
+    },
+    {
+      id: 2,
+      nama: "The Coffee Pot",
+      deskripsi: "Favorit para pecinta kopi dengan berbagai varian minuman.",
+      img: "https://media-cdn.tripadvisor.com/media/photo-s/0e/0a/f1/5e/the-coffee-pot.jpg",
+      ratingKey: "coffee-pot",
+    },
+    {
+      id: 3,
+      nama: "Cafe Coba",
+      deskripsi: "Suasana santai dan kopi dengan cita rasa khas Aceh.",
+      img: "https://media-cdn.tripadvisor.com/media/photo-s/12/19/23/6d/cafe-coba.jpg",
+      ratingKey: "cafe-coba",
+    },
+    {
+      id: 4,
+      nama: "Aceh Coffee House",
+      deskripsi: "Menawarkan kopi Gayo asli dan dessert tradisional.",
+      img: "https://media-cdn.tripadvisor.com/media/photo-s/13/9b/f0/c0/cafe-aceh.jpg",
+      ratingKey: "aceh-coffee-house",
+    },
+    {
+      id: 5,
+      nama: "Cafe Pasir Putih",
+      deskripsi: "Lokasi strategis dengan pemandangan laut dan kopi nikmat.",
+      img: "https://media-cdn.tripadvisor.com/media/photo-s/15/58/6a/77/cafe-pasir-putih.jpg",
+      ratingKey: "cafe-pasir-putih",
+    },
+    {
+      id: 6,
+      nama: "Cafe Makjo",
+      deskripsi: "Tempat asik untuk nongkrong dengan menu kopi dan dessert Aceh.",
+      img: "https://media-cdn.tripadvisor.com/media/photo-s/18/67/f5/3b/cafe-makjo.jpg",
+      ratingKey: "cafe-makjo",
+    },
+  ],
+};
+
+const Card = ({ img, nama, deskripsi, children }) => (
+  <div
+    style={{
+      background: "white",
+      borderRadius: "8px",
+      boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
+      width: 260,
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+      marginBottom: 20,
+    }}
+  >
+    <img
+      src={img}
+      alt={nama}
+      style={{ width: "100%", height: 160, objectFit: "cover" }}
+    />
+    <div style={{ padding: 15, flexGrow: 1 }}>
+      <h3 style={{ marginTop: 0, fontFamily: "'Playfair Display', serif", color: "#8B4513" }}>{nama}</h3>
+      <p>{deskripsi}</p>
+      {children}
+    </div>
+  </div>
+);
+
+const Rating = ({ ratingKey }) => {
+  const [rating, setRating] = useState(0);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rating-" + ratingKey);
+    if (saved) setRating(parseInt(saved));
+  }, [ratingKey]);
+
+  const handleClick = (val) => {
+    setRating(val);
+    localStorage.setItem("rating-" + ratingKey, val);
+  };
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span
+          key={star}
+          onClick={() => handleClick(star)}
+          style={{
+            fontSize: 22,
+            color: star <= rating ? "gold" : "#ccc",
+            cursor: "pointer",
+            transition: "color 0.3s",
+            userSelect: "none",
+          }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+};
+
+const Section = ({ id, title, items, showRating }) => (
+  <section id={id} style={{ maxWidth: 1000, margin: "50px auto", padding: "0 20px" }}>
+    <h2 style={{ textAlign: "center", marginBottom: 30, fontFamily: "'Playfair Display', serif", color: "#5C3A21", fontSize: 32 }}>
+      {title}
+    </h2>
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        gap: 25,
+      }}
+    >
+      {items.map(({ id, img, nama, deskripsi, ratingKey }) => (
+        <Card key={id} img={img} nama={nama} deskripsi={deskripsi}>
+          {showRating && ratingKey && <Rating ratingKey={ratingKey} />}
+        </Card>
+      ))}
+    </div>
+  </section>
+);
+
+export default function App() {
+  const [search, setSearch] = useState("");
+
+  // Filter function, case insensitive search in nama
+  const filterItems = (items) =>
+    items.filter((item) => item.nama.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div style={{ fontFamily: "'Poppins', sans-serif", background: "#fffaf0", color: "#333", minHeight: "100vh" }}>
+      <header
+        style={{
+          backgroundColor: "#5C3A21",
+          color: "#fff",
+          padding: "15px 20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, margin: 0 }}>Wisata Kuliner Aceh</h1>
+        <nav style={{ display: "flex", gap: 15, flexWrap: "wrap" }}>
+          <a href="#makanan" style={{ color: "white", fontWeight: 600 }}>
+            Makanan
+          </a>
+          <a href="#minuman" style={{ color: "white", fontWeight: 600 }}>
+            Minuman
+          </a>
+          <a href="#dessert" style={{ color: "white", fontWeight: 600 }}>
+            Dessert
+          </a>
+          <a href="#cafe" style={{ color: "white", fontWeight: 600 }}>
+            Cafe
+          </a>
+          <a href="#peta" style={{ color: "white", fontWeight: 600 }}>
+            Peta
+          </a>
+        </nav>
+      </header>
+
+      <div
+        style={{
+          backgroundImage:
+            "url('https://upload.wikimedia.org/wikipedia/commons/7/7d/Mie_aceh_seafood.JPG')",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          height: 350,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "white",
+          textShadow: "2px 2px 5px #000",
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "2.8rem",
+          textAlign: "center",
+          padding: "0 20px",
+        }}
+      >
+        Jelajahi Kelezatan Kuliner & Tempat Terbaik di Aceh
+      </div>
+
+      <div style={{ maxWidth: 600, margin: "30px auto", padding: "0 20px" }}>
+        <input
+          type="search"
+          placeholder="Cari makanan, minuman, dessert, atau cafe..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: "100%",
+            padding: 10,
+            fontSize: 18,
+            borderRadius: 8,
+            border: "1px solid #ccc",
+            boxSizing: "border-box",
+          }}
+          aria-label="Search"
+        />
+      </div>
+
+      <Section id="makanan" title="Makanan Khas Aceh" items={filterItems(data.makanan)} />
+      <Section id="minuman" title="Minuman Khas Aceh" items={filterItems(data.minuman)} />
+      <Section id="dessert" title="Dessert Khas Aceh" items={filterItems(data.dessert)} />
+      <Section id="cafe" title="Cafe Terbaik di Aceh" items={filterItems(data.cafe)} showRating />
+
+      <section
+        id="peta"
+        style={{
+          maxWidth: 1000,
+          margin: "50px auto 30px",
+          padding: "0 20px",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#5C3A21", marginBottom: 20 }}>
+          Lokasi Aceh
+        </h2>
+        <iframe
+          title="Peta Aceh"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.082264111989!2d95.32000351431636!3d5.548290354803759!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30404c40b8e21b23%3A0x1d1b84dd0a44e8ae!2sAceh!5e0!3m2!1sid!2sid!4v1694162345810!5m2!1sid!2sid"
+          width="100%"
+          height="400"
+          style={{ border: 0, borderRadius: 12 }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </section>
+
+      <footer
+        style={{
+          textAlign: "center",
+          padding: "20px",
+          backgroundColor: "#5C3A21",
+          color: "white",
+          fontWeight: "600",
+          marginTop: 50,
+        }}
+      >
+        &copy; 2025 Wisata Kuliner Aceh - All rights reserved
+      </footer>
+    </div>
+  );
+}
