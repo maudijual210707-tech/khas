@@ -1,370 +1,558 @@
-import React, { useState, useEffect } from "react";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rasa Aceh - Restoran Makanan Khas Aceh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .font-playfair { font-family: 'Playfair Display', serif; }
+    .font-poppins { font-family: 'Poppins', sans-serif; }
+    .hero-bg {
+      background: linear-gradient(rgba(92, 58, 33, 0.7), rgba(92, 58, 33, 0.7)),
+                  url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23D4A574" width="1200" height="600"/><path fill="%23B8956A" d="M0 300c200-50 400 50 600 0s400-50 600 0v300H0z"/><circle fill="%23A0845C" cx="200" cy="150" r="30"/><circle fill="%23A0845C" cx="800" cy="200" r="25"/><circle fill="%23A0845C" cx="1000" cy="100" r="20"/></svg>') center/cover;
+    }
+    .menu-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .menu-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: #D4A574;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 50%;
+      background-color: #D4A574;
+      transition: all 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+      left: 0;
+    }
+    .section-hidden {
+      display: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #D4A574, #B8956A);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #B8956A, #A0845C);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="font-poppins bg-amber-50">
 
-const data = {
-  makanan: [
-    {
-      id: 1,
-      nama: "Mie Aceh",
-      deskripsi: "Mie pedas bercampur rempah dan daging sapi atau seafood.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Mie_aceh_seafood.JPG",
-    },
-    {
-      id: 2,
-      nama: "Ayam Tangkap",
-      deskripsi: "Ayam goreng dengan rempah daun kari khas Aceh.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Ayam_Tangkap.jpg",
-    },
-    {
-      id: 3,
-      nama: "Sate Matang",
-      deskripsi: "Sate daging sapi dengan bumbu kacang khas Aceh.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Sate_Matang_aceh.JPG",
-    },
-    {
-      id: 4,
-      nama: "Kue Rupiah",
-      deskripsi: "Kue tradisional berbentuk lembaran tipis, manis dan legit.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/Kue_Rupiah_aceh.JPG",
-    },
-    {
-      id: 5,
-      nama: "Kuah Sie",
-      deskripsi: "Sup daging sapi dengan bumbu khas Aceh yang pedas dan kaya rempah.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/5/57/Kuah_Siep.jpg",
-    },
-    {
-      id: 6,
-      nama: "Nasi Gurih Aceh",
-      deskripsi:
-        "Nasi harum dimasak dengan santan dan rempah, disajikan dengan lauk tradisional.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Nasi_Gurih_Aceh.JPG",
-    },
-  ],
-  minuman: [
-    {
-      id: 1,
-      nama: "Kopi Gayo",
-      deskripsi: "Kopi robusta terkenal dari dataran tinggi Aceh.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Kopi_Gayo.jpg",
-    },
-    {
-      id: 2,
-      nama: "Teh Tarik Aceh",
-      deskripsi: "Teh susu khas Aceh dengan rasa manis dan creamy.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/1/15/Teh_Tarikh_Aceh.JPG",
-    },
-    {
-      id: 3,
-      nama: "Es Teh Manis",
-      deskripsi: "Minuman segar dan populer, cocok untuk iklim tropis Aceh.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/3/39/Es_Teh_Manis.jpg",
-    },
-    {
-      id: 4,
-      nama: "Jus Manggis",
-      deskripsi: "Jus segar dari buah manggis asli Aceh yang manis dan sehat.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Jus_Manggis.jpg",
-    },
-    {
-      id: 5,
-      nama: "Sari Kelapa",
-      deskripsi: "Air kelapa muda yang menyegarkan, sangat populer di Aceh.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Sari_Kelapa.jpg",
-    },
-    {
-      id: 6,
-      nama: "Kopi Luwak",
-      deskripsi:
-        "Kopi eksklusif dengan cita rasa unik dari biji kopi yang difermentasi luwak.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/Kopi_Luwak.jpg",
-    },
-  ],
-  dessert: [
-    {
-      id: 1,
-      nama: "Timphan",
-      deskripsi: "Kue tradisional Aceh dari pisang dan tepung ketan.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/7/75/Timphan.JPG",
-    },
-    {
-      id: 2,
-      nama: "Dodoh",
-      deskripsi: "Dessert manis dari ketan dan gula aren.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Dodoh.jpg",
-    },
-    {
-      id: 3,
-      nama: "Meuseukat",
-      deskripsi: "Kue lapis tradisional Aceh dengan rasa manis dan kenyal.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Meuseukat.JPG",
-    },
-    {
-      id: 4,
-      nama: "Bawang Aceh",
-      deskripsi: "Kue bawang gurih dan manis khas Aceh yang unik.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Bawang_aceh.jpg",
-    },
-    {
-      id: 5,
-      nama: "Kue Kutang",
-      deskripsi: "Kue tradisional Aceh yang dibuat dari tepung beras dan gula merah.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Kue_Kutang_Aceh.JPG",
-    },
-    {
-      id: 6,
-      nama: "Nagasari",
-      deskripsi: "Kue tradisional dari tepung beras, santan, dan pisang.",
-      img: "https://upload.wikimedia.org/wikipedia/commons/1/1c/Kue_Nagasari.JPG",
-    },
-  ],
-  cafe: [
-    {
-      id: 1,
-      nama: "Cafe Rizzy",
-      deskripsi: "Tempat nyaman dengan kopi terbaik dan suasana cozy.",
-      img: "https://media-cdn.tripadvisor.com/media/photo-s/1a/d0/f9/c7/cafe-rizzy.jpg",
-      ratingKey: "cafe-rizzy",
-    },
-    {
-      id: 2,
-      nama: "The Coffee Pot",
-      deskripsi: "Favorit para pecinta kopi dengan berbagai varian minuman.",
-      img: "https://media-cdn.tripadvisor.com/media/photo-s/0e/0a/f1/5e/the-coffee-pot.jpg",
-      ratingKey: "coffee-pot",
-    },
-    {
-      id: 3,
-      nama: "Cafe Coba",
-      deskripsi: "Suasana santai dan kopi dengan cita rasa khas Aceh.",
-      img: "https://media-cdn.tripadvisor.com/media/photo-s/12/19/23/6d/cafe-coba.jpg",
-      ratingKey: "cafe-coba",
-    },
-    {
-      id: 4,
-      nama: "Aceh Coffee House",
-      deskripsi: "Menawarkan kopi Gayo asli dan dessert tradisional.",
-      img: "https://media-cdn.tripadvisor.com/media/photo-s/13/9b/f0/c0/cafe-aceh.jpg",
-      ratingKey: "aceh-coffee-house",
-    },
-    {
-      id: 5,
-      nama: "Cafe Pasir Putih",
-      deskripsi: "Lokasi strategis dengan pemandangan laut dan kopi nikmat.",
-      img: "https://media-cdn.tripadvisor.com/media/photo-s/15/58/6a/77/cafe-pasir-putih.jpg",
-      ratingKey: "cafe-pasir-putih",
-    },
-    {
-      id: 6,
-      nama: "Cafe Makjo",
-      deskripsi: "Tempat asik untuk nongkrong dengan menu kopi dan dessert Aceh.",
-      img: "https://media-cdn.tripadvisor.com/media/photo-s/18/67/f5/3b/cafe-makjo.jpg",
-      ratingKey: "cafe-makjo",
-    },
-  ],
-};
-
-const Card = ({ img, nama, deskripsi, children }) => (
-  <div
-    style={{
-      background: "white",
-      borderRadius: "8px",
-      boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
-      width: 260,
-      overflow: "hidden",
-      display: "flex",
-      flexDirection: "column",
-      marginBottom: 20,
-    }}
-  >
-    <img
-      src={img}
-      alt={nama}
-      style={{ width: "100%", height: 160, objectFit: "cover" }}
-    />
-    <div style={{ padding: 15, flexGrow: 1 }}>
-      <h3 style={{ marginTop: 0, fontFamily: "'Playfair Display', serif", color: "#8B4513" }}>{nama}</h3>
-      <p>{deskripsi}</p>
-      {children}
-    </div>
-  </div>
-);
-
-const Rating = ({ ratingKey }) => {
-  const [rating, setRating] = useState(0);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("rating-" + ratingKey);
-    if (saved) setRating(parseInt(saved));
-  }, [ratingKey]);
-
-  const handleClick = (val) => {
-    setRating(val);
-    localStorage.setItem("rating-" + ratingKey, val);
-  };
-
-  return (
-    <div style={{ marginTop: 10 }}>
-      {[1, 2, 3, 4, 5].map((star) => (
-        <span
-          key={star}
-          onClick={() => handleClick(star)}
-          style={{
-            fontSize: 22,
-            color: star <= rating ? "gold" : "#ccc",
-            cursor: "pointer",
-            transition: "color 0.3s",
-            userSelect: "none",
-          }}
-        >
-          ★
-        </span>
-      ))}
-    </div>
-  );
-};
-
-const Section = ({ id, title, items, showRating }) => (
-  <section id={id} style={{ maxWidth: 1000, margin: "50px auto", padding: "0 20px" }}>
-    <h2 style={{ textAlign: "center", marginBottom: 30, fontFamily: "'Playfair Display', serif", color: "#5C3A21", fontSize: 32 }}>
-      {title}
-    </h2>
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        gap: 25,
-      }}
-    >
-      {items.map(({ id, img, nama, deskripsi, ratingKey }) => (
-        <Card key={id} img={img} nama={nama} deskripsi={deskripsi}>
-          {showRating && ratingKey && <Rating ratingKey={ratingKey} />}
-        </Card>
-      ))}
-    </div>
-  </section>
-);
-
-export default function App() {
-  const [search, setSearch] = useState("");
-
-  // Filter function, case insensitive search in nama
-  const filterItems = (items) =>
-    items.filter((item) => item.nama.toLowerCase().includes(search.toLowerCase()));
-
-  return (
-    <div style={{ fontFamily: "'Poppins', sans-serif", background: "#fffaf0", color: "#333", minHeight: "100vh" }}>
-      <header
-        style={{
-          backgroundColor: "#5C3A21",
-          color: "#fff",
-          padding: "15px 20px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, margin: 0 }}>Wisata Kuliner Aceh</h1>
-        <nav style={{ display: "flex", gap: 15, flexWrap: "wrap" }}>
-          <a href="#makanan" style={{ color: "white", fontWeight: 600 }}>
-            Makanan
-          </a>
-          <a href="#minuman" style={{ color: "white", fontWeight: 600 }}>
-            Minuman
-          </a>
-          <a href="#dessert" style={{ color: "white", fontWeight: 600 }}>
-            Dessert
-          </a>
-          <a href="#cafe" style={{ color: "white", fontWeight: 600 }}>
-            Cafe
-          </a>
-          <a href="#peta" style={{ color: "white", fontWeight: 600 }}>
-            Peta
-          </a>
+  <!-- Header -->
+  <header class="bg-amber-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="font-playfair text-3xl font-bold text-amber-200">🍜 Rasa Aceh</h1>
+        <nav class="hidden md:flex space-x-8">
+          <a href="#" class="nav-link font-medium" onclick="showSection('beranda')">Beranda</a>
+          <a href="#" class="nav-link font-medium" onclick="showSection('tentang')">Tentang</a>
+          <a href="#" class="nav-link font-medium" onclick="showSection('menu')">Menu</a>
+          <a href="#" class="nav-link font-medium" onclick="showSection('galeri')">Galeri</a>
+          <a href="#" class="nav-link font-medium" onclick="showSection('kontak')">Kontak</a>
         </nav>
-      </header>
-
-      <div
-        style={{
-          backgroundImage:
-            "url('https://upload.wikimedia.org/wikipedia/commons/7/7d/Mie_aceh_seafood.JPG')",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          height: 350,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "white",
-          textShadow: "2px 2px 5px #000",
-          fontFamily: "'Playfair Display', serif",
-          fontSize: "2.8rem",
-          textAlign: "center",
-          padding: "0 20px",
-        }}
-      >
-        Jelajahi Kelezatan Kuliner & Tempat Terbaik di Aceh
+        <button class="md:hidden text-white" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
       </div>
-
-      <div style={{ maxWidth: 600, margin: "30px auto", padding: "0 20px" }}>
-        <input
-          type="search"
-          placeholder="Cari makanan, minuman, dessert, atau cafe..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            fontSize: 18,
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            boxSizing: "border-box",
-          }}
-          aria-label="Search"
-        />
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="md:hidden mt-4 space-y-2 hidden">
+        <a href="#" class="block py-2 nav-link" onclick="showSection('beranda')">Beranda</a>
+        <a href="#" class="block py-2 nav-link" onclick="showSection('tentang')">Tentang</a>
+        <a href="#" class="block py-2 nav-link" onclick="showSection('menu')">Menu</a>
+        <a href="#" class="block py-2 nav-link" onclick="showSection('galeri')">Galeri</a>
+        <a href="#" class="block py-2 nav-link" onclick="showSection('kontak')">Kontak</a>
       </div>
-
-      <Section id="makanan" title="Makanan Khas Aceh" items={filterItems(data.makanan)} />
-      <Section id="minuman" title="Minuman Khas Aceh" items={filterItems(data.minuman)} />
-      <Section id="dessert" title="Dessert Khas Aceh" items={filterItems(data.dessert)} />
-      <Section id="cafe" title="Cafe Terbaik di Aceh" items={filterItems(data.cafe)} showRating />
-
-      <section
-        id="peta"
-        style={{
-          maxWidth: 1000,
-          margin: "50px auto 30px",
-          padding: "0 20px",
-          textAlign: "center",
-        }}
-      >
-        <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#5C3A21", marginBottom: 20 }}>
-          Lokasi Aceh
-        </h2>
-        <iframe
-          title="Peta Aceh"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.082264111989!2d95.32000351431636!3d5.548290354803759!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30404c40b8e21b23%3A0x1d1b84dd0a44e8ae!2sAceh!5e0!3m2!1sid!2sid!4v1694162345810!5m2!1sid!2sid"
-          width="100%"
-          height="400"
-          style={{ border: 0, borderRadius: 12 }}
-          allowFullScreen=""
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      </section>
-
-      <footer
-        style={{
-          textAlign: "center",
-          padding: "20px",
-          backgroundColor: "#5C3A21",
-          color: "white",
-          fontWeight: "600",
-          marginTop: 50,
-        }}
-      >
-        &copy; 2025 Wisata Kuliner Aceh - All rights reserved
-      </footer>
     </div>
-  );
-}
+  </header>
+
+  <!-- Beranda Section -->
+  <div id="beranda" class="page-section">
+    <!-- Hero Section -->
+    <section class="hero-bg h-96 flex flex-col justify-center items-center text-white text-center px-6">
+      <h1 class="font-playfair text-5xl md:text-6xl font-bold mb-4 text-shadow">Kelezatan Makanan Khas Aceh</h1>
+      <p class="text-xl md:text-2xl mb-8 max-w-2xl">Rasakan rempah dan budaya dalam setiap gigitan</p>
+      <button onclick="showSection('menu')" class="btn-primary text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg">
+        Lihat Menu Kami
+      </button>
+    </section>
+
+    <!-- Featured Menu Preview -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-6">
+        <h2 class="font-playfair text-4xl font-bold text-center text-amber-900 mb-12">Menu Andalan Kami</h2>
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div class="menu-card bg-white rounded-xl shadow-lg overflow-hidden" onclick="showMenuDetail('mie-aceh')">
+            <div class="h-48 bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🍜</div>
+                <p class="font-semibold">Mie Aceh</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Mie Aceh</h3>
+              <p class="text-gray-600 mb-4">Mie pedas dengan rempah khas dan daging sapi/udang segar</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 25.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-card bg-white rounded-xl shadow-lg overflow-hidden" onclick="showMenuDetail('kuah-pliek')">
+            <div class="h-48 bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🥗</div>
+                <p class="font-semibold">Kuah Pliek U</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Kuah Pliek U</h3>
+              <p class="text-gray-600 mb-4">Sayur khas Aceh dengan bumbu fermentasi kelapa yang unik</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 20.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-card bg-white rounded-xl shadow-lg overflow-hidden" onclick="showMenuDetail('ayam-tangkap')">
+            <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🍗</div>
+                <p class="font-semibold">Ayam Tangkap</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Ayam Tangkap</h3>
+              <p class="text-gray-600 mb-4">Ayam goreng dengan daun kari dan pandan yang harum</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 30.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Tentang Section -->
+  <div id="tentang" class="page-section section-hidden">
+    <section class="py-16 bg-gradient-to-br from-amber-50 to-orange-50">
+      <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="font-playfair text-4xl font-bold text-amber-900 mb-8">Tentang Rasa Aceh</h2>
+          <div class="text-6xl mb-6">🏛️</div>
+          <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+            Rasa Aceh adalah restoran yang didedikasikan untuk melestarikan dan menyajikan cita rasa autentik masakan Aceh. 
+            Dengan resep turun-temurun dan bahan-bahan pilihan, kami menghadirkan pengalaman kuliner yang tak terlupakan.
+          </p>
+          <div class="grid md:grid-cols-3 gap-8 mt-12">
+            <div class="text-center">
+              <div class="text-4xl mb-4">👨‍🍳</div>
+              <h3 class="font-bold text-amber-900 mb-2">Chef Berpengalaman</h3>
+              <p class="text-gray-600">Chef kami memiliki pengalaman puluhan tahun dalam masakan Aceh</p>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl mb-4">🌿</div>
+              <h3 class="font-bold text-amber-900 mb-2">Bahan Segar</h3>
+              <p class="text-gray-600">Menggunakan rempah dan bahan segar langsung dari Aceh</p>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl mb-4">🏆</div>
+              <h3 class="font-bold text-amber-900 mb-2">Resep Autentik</h3>
+              <p class="text-gray-600">Resep turun-temurun yang dijaga keasliannya</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Menu Section -->
+  <div id="menu" class="page-section section-hidden">
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-6">
+        <h2 class="font-playfair text-4xl font-bold text-center text-amber-900 mb-12">Menu Lengkap</h2>
+        
+        <!-- Menu Categories -->
+        <div class="flex justify-center mb-8 space-x-4 flex-wrap">
+          <button onclick="filterMenu('all')" class="menu-filter bg-amber-600 text-white px-6 py-2 rounded-full mb-2">Semua</button>
+          <button onclick="filterMenu('makanan')" class="menu-filter bg-gray-200 text-gray-700 px-6 py-2 rounded-full mb-2">Makanan Utama</button>
+          <button onclick="filterMenu('minuman')" class="menu-filter bg-gray-200 text-gray-700 px-6 py-2 rounded-full mb-2">Minuman</button>
+          <button onclick="filterMenu('dessert')" class="menu-filter bg-gray-200 text-gray-700 px-6 py-2 rounded-full mb-2">Dessert</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <!-- Makanan Utama -->
+          <div class="menu-item makanan menu-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🍜</div>
+                <p class="font-semibold">Mie Aceh</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Mie Aceh</h3>
+              <p class="text-gray-600 mb-4">Mie pedas dengan rempah khas dan daging sapi/udang</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 25.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item makanan menu-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🥗</div>
+                <p class="font-semibold">Kuah Pliek U</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Kuah Pliek U</h3>
+              <p class="text-gray-600 mb-4">Sayur khas Aceh dengan bumbu fermentasi kelapa</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 20.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item makanan menu-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🍗</div>
+                <p class="font-semibold">Ayam Tangkap</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Ayam Tangkap</h3>
+              <p class="text-gray-600 mb-4">Ayam goreng dengan daun kari dan pandan</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 30.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item makanan menu-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🍛</div>
+                <p class="font-semibold">Nasi Gurih</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Nasi Gurih</h3>
+              <p class="text-gray-600 mb-4">Nasi santan dengan lauk pauk khas Aceh</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 22.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Minuman -->
+          <div class="menu-item minuman menu-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">☕</div>
+                <p class="font-semibold">Kopi Aceh</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Kopi Aceh</h3>
+              <p class="text-gray-600 mb-4">Kopi robusta asli Gayo dengan cita rasa khas</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 15.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item minuman menu-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-green-400 to-lime-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🥤</div>
+                <p class="font-semibold">Es Timun Serut</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Es Timun Serut</h3>
+              <p class="text-gray-600 mb-4">Minuman segar khas Aceh dengan timun serut</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 12.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dessert -->
+          <div class="menu-item dessert menu-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center">
+              <div class="text-center text-white">
+                <div class="text-6xl mb-2">🍰</div>
+                <p class="font-semibold">Bolu Kemojo</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-playfair text-xl font-bold text-amber-900 mb-2">Bolu Kemojo</h3>
+              <p class="text-gray-600 mb-4">Kue tradisional Aceh yang manis dan lembut</p>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-amber-700">Rp 18.000</span>
+                <button class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition">Pesan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Galeri Section -->
+  <div id="galeri" class="page-section section-hidden">
+    <section class="py-16 bg-gradient-to-br from-amber-50 to-orange-50">
+      <div class="container mx-auto px-6">
+        <h2 class="font-playfair text-4xl font-bold text-center text-amber-900 mb-12">Galeri Restoran</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div class="gallery-item bg-gradient-to-br from-red-400 to-orange-500 rounded-xl h-64 flex items-center justify-center text-white cursor-pointer hover:scale-105 transition-transform">
+            <div class="text-center">
+              <div class="text-6xl mb-2">🍜</div>
+              <p class="font-semibold">Mie Aceh Spesial</p>
+            </div>
+          </div>
+          <div class="gallery-item bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl h-64 flex items-center justify-center text-white cursor-pointer hover:scale-105 transition-transform">
+            <div class="text-center">
+              <div class="text-6xl mb-2">🏪</div>
+              <p class="font-semibold">Suasana Restoran</p>
+            </div>
+          </div>
+          <div class="gallery-item bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl h-64 flex items-center justify-center text-white cursor-pointer hover:scale-105 transition-transform">
+            <div class="text-center">
+              <div class="text-6xl mb-2">👨‍🍳</div>
+              <p class="font-semibold">Chef Memasak</p>
+            </div>
+          </div>
+          <div class="gallery-item bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl h-64 flex items-center justify-center text-white cursor-pointer hover:scale-105 transition-transform">
+            <div class="text-center">
+              <div class="text-6xl mb-2">🌿</div>
+              <p class="font-semibold">Rempah Segar</p>
+            </div>
+          </div>
+          <div class="gallery-item bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl h-64 flex items-center justify-center text-white cursor-pointer hover:scale-105 transition-transform">
+            <div class="text-center">
+              <div class="text-6xl mb-2">🍽️</div>
+              <p class="font-semibold">Penyajian Makanan</p>
+            </div>
+          </div>
+          <div class="gallery-item bg-gradient-to-br from-indigo-400 to-purple-500 rounded-xl h-64 flex items-center justify-center text-white cursor-pointer hover:scale-105 transition-transform">
+            <div class="text-center">
+              <div class="text-6xl mb-2">👥</div>
+              <p class="font-semibold">Pelanggan Puas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Kontak Section -->
+  <div id="kontak" class="page-section section-hidden">
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-6">
+        <h2 class="font-playfair text-4xl font-bold text-center text-amber-900 mb-12">Hubungi Kami</h2>
+        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
+          <div>
+            <h3 class="font-bold text-xl text-amber-900 mb-6">Informasi Kontak</h3>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <div class="text-2xl mr-4">📍</div>
+                <div>
+                  <p class="font-semibold">Alamat</p>
+                  <p class="text-gray-600">Jl. Teuku Umar No. 123, Banda Aceh</p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="text-2xl mr-4">📞</div>
+                <div>
+                  <p class="font-semibold">Telepon</p>
+                  <p class="text-gray-600">+62 651 123456</p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="text-2xl mr-4">⏰</div>
+                <div>
+                  <p class="font-semibold">Jam Buka</p>
+                  <p class="text-gray-600">Setiap hari: 08.00 - 22.00 WIB</p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="text-2xl mr-4">📧</div>
+                <div>
+                  <p class="font-semibold">Email</p>
+                  <p class="text-gray-600">info@rasaaceh.com</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-bold text-xl text-amber-900 mb-6">Kirim Pesan</h3>
+            <form class="space-y-4" onsubmit="handleContactForm(event)">
+              <div>
+                <label class="block text-gray-700 font-medium mb-2">Nama</label>
+                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" required>
+              </div>
+              <div>
+                <label class="block text-gray-700 font-medium mb-2">Email</label>
+                <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" required>
+              </div>
+              <div>
+                <label class="block text-gray-700 font-medium mb-2">Pesan</label>
+                <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold w-full">
+                Kirim Pesan
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-amber-900 text-white py-12">
+    <div class="container mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="font-playfair text-2xl font-bold text-amber-200 mb-4">🍜 Rasa Aceh</h3>
+          <p class="text-amber-100 mb-4">Restoran makanan khas Aceh dengan cita rasa autentik dan pelayanan terbaik.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-amber-200 hover:text-white transition">📘</a>
+            <a href="#" class="text-amber-200 hover:text-white transition">📷</a>
+            <a href="#" class="text-amber-200 hover:text-white transition">🐦</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-bold text-amber-200 mb-4">Menu Populer</h4>
+          <ul class="space-y-2 text-amber-100">
+            <li><a href="#" class="hover:text-white transition">Mie Aceh</a></li>
+            <li><a href="#" class="hover:text-white transition">Kuah Pliek U</a></li>
+            <li><a href="#" class="hover:text-white transition">Ayam Tangkap</a></li>
+            <li><a href="#" class="hover:text-white transition">Kopi Aceh</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-amber-200 mb-4">Jam Operasional</h4>
+          <div class="text-amber-100 space-y-2">
+            <p>Senin - Minggu</p>
+            <p>08.00 - 22.00 WIB</p>
+            <p class="mt-4">📞 +62 651 123456</p>
+            <p>📧 info@rasaaceh.com</p>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-amber-800 mt-8 pt-8 text-center text-amber-200">
+        <p>&copy; 2025 Rasa Aceh. Semua hak dilindungi.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navigation functionality
+    function showSection(sectionName) {
+      // Hide all sections
+      const sections = document.querySelectorAll('.page-section');
+      sections.forEach(section => {
+        section.classList.add('section-hidden');
+      });
+      
+      // Show selected section
+      const targetSection = document.getElementById(sectionName);
+      if (targetSection) {
+        targetSection.classList.remove('section-hidden');
+      }
+      
+      // Close mobile menu
+      document.getElementById('mobileMenu').classList.add('hidden');
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('hidden');
+    }
+
+    // Menu filtering
+    function filterMenu(category) {
+      const menuItems = document.querySelectorAll('.menu-item');
+      const filterButtons = document.querySelectorAll('.menu-filter');
+      
+      // Update button styles
+      filterButtons.forEach(btn => {
+        btn.classList.remove('bg-amber-600', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-700');
+      });
+      event.target.classList.remove('bg-gray-200', 'text-gray-700');
+      event.target.classList.add('bg-amber-600', 'text-white');
+      
+      // Filter menu items
+      menuItems.forEach(item => {
+        if (category === 'all' || item.classList.contains(category)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // Menu detail modal (simplified)
+    function showMenuDetail(menuId) {
+      const menuDetails = {
+        'mie-aceh': 'Mie Aceh adalah hidangan mie pedas khas Aceh dengan bumbu rempah yang kaya dan daging sapi atau udang segar.',
+        'kuah-pliek': 'Kuah Pliek U adalah sayur khas Aceh dengan bumbu fermentasi kelapa yang memberikan rasa unik dan gurih.',
+        'ayam-tangkap': 'Ayam Tangkap adalah ayam goreng khas Aceh dengan daun kari dan pandan yang memberikan aroma harum.'
+      };
+      
+      alert(menuDetails[menuId] || 'Detail menu tidak tersedia.');
+    }
+
+    // Contact form handler
+    function handleContactForm(event) {
+      event.preventDefault();
+      alert('Terima kasih! Pesan Anda telah dikirim. Kami akan segera menghubungi Anda.');
+      event.target.reset();
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      showSection('beranda');
+    });
+  </script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97bbfb228482fcef',t:'MTc1NzMwODY2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
